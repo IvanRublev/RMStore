@@ -1,6 +1,4 @@
 #RMStore
-[![Build Status](https://travis-ci.org/robotmedia/RMStore.png)](https://travis-ci.org/robotmedia/RMStore)
-
 
 A lightweight iOS library for In-App Purchases.
 
@@ -13,6 +11,37 @@ RMStore adds [blocks](https://github.com/robotmedia/RMStore/blob/master/README.m
     NSLog(@"Something went wrong");
 }];
 ```
+
+### Features of this fork
+
+#### Watchdog timer for product request timeouts.
+
+Despite of iTunes servers are in CDN there may be situations when the AppStore answers takes too long.
+
+This feature is intended for `-requestProducts:` and `-requestProducts:success:failure:` messages and is disabled by default. To enable set:
+	
+```[RMStore defaultStore].useRequestProductsWatchdogTimer = YES;```
+	
+When feature is enabled, you'll receive `RMStoreErrorCodeWatchdogTimerFired` error if response for product request is not received within 10 seconds (by default). The associated product request will be aborted automatically. Error will be delivered in usual way - to the appropriate `error` block or with `-...Failed:` method of `RMStoreObserver` protocol. 
+
+The timeout value may be configured via `requestProductTimeout` property.
+
+You can handle that error to display the appropriate 'Try again' alert to a user.
+
+#### Handlers for request/transaction start notifications
+
+RMStoreObserver protocol is extended with the following methods:
+
+```objective-c
+- (void)storePaymentTransactionStarted:(NSNotification*)notification;
+- (void)storeProductsRequestStarted:(NSNotification*)notification;
+- (void)storeRefreshReceiptStarted;
+- (void)storeRestoreTransactionsStarted:(NSNotification*)notification;
+```
+
+These notifications handlers are added to balance appropriate `-...Finished:` or `-...Failed:` ones. 
+
+Set of the mentioned methods can be used to update UI on start or stop of request/transactions in common way.
 
 ##Add RMStore to your project
 
