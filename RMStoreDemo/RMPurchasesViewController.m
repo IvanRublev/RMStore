@@ -55,7 +55,7 @@
 - (void)restoreAction
 {
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    [[RMStore defaultStore] restoreTransactionsOnSuccess:^{
+    [[RMStore defaultStore] restoreTransactionsOnSuccess:^(NSArray *transactions) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;        
         [self.tableView reloadData];
     } failure:^(NSError *error) {
@@ -94,7 +94,7 @@
     NSString *productID = [_productIdentifiers objectAtIndex:indexPath.row];
     SKProduct *product = [store productForIdentifier:productID];
     cell.textLabel.text = product ? product.localizedTitle : productID;
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%d", [_persistence countProductOfdentifier:productID]];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%ld", (long)[_persistence countProductOfdentifier:productID]];
     return cell;
 }
 

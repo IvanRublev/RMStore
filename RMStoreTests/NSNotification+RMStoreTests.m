@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Robot Media. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import "RMStore.h"
 
-@interface NSNotification_RMStoreTests : SenTestCase
+@interface NSNotification_RMStoreTests : XCTestCase
 
 @end
 
@@ -24,32 +24,32 @@
 
 - (void)testInvalidProductIdentifiers
 {
-    NSArray *result = _notification.invalidProductIdentifiers;
-    STAssertNil(result, @"");
+    NSArray *result = _notification.rm_invalidProductIdentifiers;
+    XCTAssertNil(result, @"");
 }
 
 - (void)testProductIdentifier
 {
-    NSString *result = _notification.productIdentifier;
-    STAssertNil(result, @"");
+    NSString *result = _notification.rm_productIdentifier;
+    XCTAssertNil(result, @"");
 }
 
 - (void)testProducts
 {
-    NSArray *result = _notification.products;
-    STAssertNil(result, @"");
+    NSArray *result = _notification.rm_products;
+    XCTAssertNil(result, @"");
 }
 
 - (void)testStoreError
 {
-    NSError *result = _notification.storeError;
-    STAssertNil(result, @"");
+    NSError *result = _notification.rm_storeError;
+    XCTAssertNil(result, @"");
 }
 
 - (void)testTransaction
 {
-    SKPaymentTransaction *result = _notification.transaction;
-    STAssertNil(result, @"");
+    SKPaymentTransaction *result = _notification.rm_transaction;
+    XCTAssertNil(result, @"");
 }
 
 @end
