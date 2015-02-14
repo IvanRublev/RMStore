@@ -968,6 +968,7 @@
 
 - (void)testPaymentQueueRestoreCompletedTransactionsFinished_Queue__Blocks
 {
+    [[_observer expect] storeRestoreTransactionsStarted:[OCMArg isNotNil]];
     [[_observer expect] storeRestoreTransactionsFinished:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
         XCTAssertEqualObjects(notification.rm_transactions, @[]);
         return YES;
@@ -1084,6 +1085,7 @@
 
 - (void)testPaymentQueueRestoreCompletedTransactionsFailedWithError_Queue_Error__Blocks
 {
+    [[_observer expect] storeRestoreTransactionsStarted:[OCMArg isNotNil]];
     NSError *originalError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
     [[_observer expect] storeRestoreTransactionsFailed:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
         XCTAssertEqualObjects(notification.rm_storeError, originalError, @"");
@@ -1135,6 +1137,7 @@
 
 - (void)testRequestDidFinish_withBlocks
 { SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
+    [[_observer expect] storeRefreshReceiptStarted:[OCMArg isNotNil]];
     [[_observer expect] storeRefreshReceiptFinished:[OCMArg isNotNil]];
     [_store addStoreObserver:_observer];
     __block BOOL executed = NO;
@@ -1154,6 +1157,7 @@
 
 - (void)testRequestDidFailWithError_withBlocks
 { SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
+    [[_observer expect] storeRefreshReceiptStarted:[OCMArg isNotNil]];
     NSError *originalError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
     [[_observer expect] storeRefreshReceiptFailed:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
         XCTAssertEqualObjects(notification.rm_storeError, originalError, @"");

@@ -51,6 +51,8 @@ NSString* const RMSKRestoreTransactionsFinished = @"RMSKRestoreTransactionsFinis
 NSString* const RMStoreNotificationInvalidProductIdentifiers = @"invalidProductIdentifiers";
 NSString* const RMStoreNotificationDownloadProgress = @"downloadProgress";
 NSString* const RMStoreNotificationProductIdentifier = @"productIdentifier";
+NSString* const RMStoreNotificationProductsIdentifiers = @"productsIdentifiers";
+NSString* const RMStoreNotificationUserIdentifier = @"userIdentifier";
 NSString* const RMStoreNotificationProducts = @"products";
 NSString* const RMStoreNotificationStoreDownload = @"storeDownload";
 NSString* const RMStoreNotificationStoreError = @"storeError";
@@ -374,7 +376,7 @@ typedef void (^RMStoreSuccessBlock)();
     [self addStoreObserver:observer selector:@selector(storePaymentTransactionStarted:) notificationName:RMSKPaymentTransactionStarted];
     [self addStoreObserver:observer selector:@selector(storePaymentTransactionFailed:) notificationName:RMSKPaymentTransactionFailed];
     [self addStoreObserver:observer selector:@selector(storePaymentTransactionFinished:) notificationName:RMSKPaymentTransactionFinished];
-    [self addStoreObserver:observer selector:@selector(storeRefreshReceiptStarted) notificationName:RMSKRefreshReceiptStarted];
+    [self addStoreObserver:observer selector:@selector(storeRefreshReceiptStarted:) notificationName:RMSKRefreshReceiptStarted];
     [self addStoreObserver:observer selector:@selector(storeRefreshReceiptFailed:) notificationName:RMSKRefreshReceiptFailed];
     [self addStoreObserver:observer selector:@selector(storeRefreshReceiptFinished:) notificationName:RMSKRefreshReceiptFinished];
     [self addStoreObserver:observer selector:@selector(storeRestoreTransactionsStarted:) notificationName:RMSKRestoreTransactionsStarted];
@@ -726,7 +728,7 @@ typedef void (^RMStoreSuccessBlock)();
     if (!identifier) {
         return nil;
     }
-    RMAddPaymentParameters *parameters = [_addPaymentParameters objectForKey:identifier];
+    RMAddPaymentParameters *parameters = _addPaymentParameters[identifier];
     [_addPaymentParameters removeObjectForKey:identifier];
     return parameters;
 }
@@ -767,7 +769,7 @@ typedef void (^RMStoreSuccessBlock)();
 - (void)addProduct:(SKProduct*)product
 {
     if (product) {
-        [_products setObject:product forKey:product.productIdentifier];
+        _products[product.productIdentifier] = product;
     }
 }
 
@@ -953,14 +955,6 @@ typedef void (^RMStoreSuccessBlock)();
             }
             [self scheduleTimer];
         }
-    }
-}
-
-- (void)resetWatchdogTimer
-{
-    @synchronized(self) {
-        RMWatchdogTimerInvalidate(_watchdogTimer);
-        [self scheduleTimer];
     }
 }
 

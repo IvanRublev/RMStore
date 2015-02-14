@@ -1,6 +1,6 @@
 #RMStore
-[![Version](https://cocoapod-badges.herokuapp.com/v/RMStore/badge.png)](http://cocoadocs.org/docsets/RMStore) [![Platform](https://cocoapod-badges.herokuapp.com/p/RMStore/badge.png)](http://cocoadocs.org/docsets/RMStore)
-[![Build Status](https://travis-ci.org/robotmedia/RMStore.png)](https://travis-ci.org/robotmedia/RMStore)
+[![Platform](https://cocoapod-badges.herokuapp.com/p/RMStore/badge.png)](http://cocoadocs.org/docsets/RMStore)
+[![Build Status](https://travis-ci.org/IvanRublev/RMStore.png)](https://travis-ci.org/IvanRublev/RMStore)
 
 A lightweight iOS library for In-App Purchases.
 
@@ -18,13 +18,13 @@ RMStore adds [blocks](#storekit-with-blocks) and [notifications](#notifications)
 
 #### Watchdog timer for product request timeouts.
 
-Despite of iTunes servers are in CDN there may be situations when the AppStore answers takes too long.
+Despite of iTunes servers are in CDN there may be situations when the AppStore answers takes too long. According to Jakob Nielsen the [10 seconds time interval](http://www.nngroup.com/articles/response-times-3-important-limits/) is about the limit for keeping the user's attention focused on the dialog. The watchdog timer is here to help app to react before the user attention goes away from the purchase dialog, for example to suggest to 'try again'.
 
-This feature is intended for `-requestProducts:` and `-requestProducts:success:failure:` messages and is disabled by default. To enable set:
+The watchdog timer feature is intended to protect `-requestProducts:` and `-requestProducts:success:failure:` calls specially and is disabled by default. To enable set:
 	
 ```[RMStore defaultStore].useRequestProductsWatchdogTimer = YES;```
 	
-When feature is enabled, you'll receive `RMStoreErrorCodeWatchdogTimerFired` error if response for product request is not received within 10 seconds (by default). The associated product request will be aborted automatically. Error will be delivered in usual way - to the appropriate `error` block or with `-...Failed:` method of `RMStoreObserver` protocol. 
+When feature is enabled, you'll receive `RMStoreErrorCodeWatchdogTimerFired` error if response for the product request is not received within 10 seconds (by default). The associated product request will be aborted automatically. Error will be delivered in usual way - to the appropriate `error` block or with `-...Failed:` method of `RMStoreObserver` protocol. 
 
 The timeout value may be configured via `requestProductTimeout` property.
 
@@ -50,6 +50,8 @@ Set of the mentioned methods can be used to update UI on start or stop of reques
 1. Add [`RMStore.h`](https://github.com/robotmedia/RMStore/blob/master/RMStore/RMStore.h) and [`RMStore.m`](https://github.com/robotmedia/RMStore/blob/master/RMStore/RMStore.m)
 2. Link `StoreKit.framework`
 3. Profit!
+
+Check out the [wiki](https://github.com/robotmedia/RMStore/wiki/Installation) for more options.
 
 ##StoreKit with blocks
 
@@ -301,7 +303,9 @@ RMStore is in initial development and its public API should not be considered st
 
 ##License
 
- Copyright 2013-2014 [Robot Media SL](http://www.robotmedia.net)
+ Watchdog timer feature Copyright 2014 [Ivan Rublev](http://ivanrublev.me)
+ 
+ Original work Copyright 2013-2014 [Robot Media SL](http://www.robotmedia.net)
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.

@@ -40,30 +40,29 @@ extern NSString* const RMStoreNotificationUserIdentifier;
 
 @class RMStore;
 
-/** Provides watchdog timer functionality to StoreKit response handling classes.
+/** Provides watchdog timer to the StoreKit products response handler the RMProductsRequestDelegate class. That is made a successor of this class.
  */
 @interface RMStoreWatchdoggedObject : NSObject
 
-/** Schedules watchdog timer. You must send this message manually to self when activity of watched subclass is started.
- @param store Store object that keeps instance of this class to check for useRequestProductsWatchdogTimer property against. Must not be nil.
- You must overload - (void)watchdogTimerFiredAction method in subclass and force error response there. Use [RMStoreWatchdoggedObject watchdogTimeoutError] object to pass with forced error response.
+/** Schedules watchdog timer. You must send this message to response handler before making a request.
+ @param store RMStore object that makes requests to be watched. The store object will be checked for useRequestProductsWatchdogTimer property for timer functionality allowance value. The passed object will be retained and must not be nil.
  @param timeout Timers timeout. Can't be lower then RMStoreWatchdogMinimalAllowedTimeout.
- @see useWatchdogTimers
- @see [RMStoreWatchdoggedObject watchdogTimeoutError]
+ @see useRequestProductsWatchdogTimer
  */
 - (void)activateWatchdogTimerWithStore:(RMStore __weak *)store timeout:(NSTimeInterval)timeout;
 
-/** Resets watchdog timer and processes the block if timer wasn't fired or if timer is not used by store. Good for processing response and continue StoreKit stuff. Remember to call [- disableWatchdogTimerAndComplete:] after all responses will be received.
+/** Called when the watch dog timer fires if it was allowed by store object. Must be overloaded in successor class and return timeout error from there.
+ @see [RMStoreWatchdoggedObject watchdogTimeoutError]
+ */
+- (void)watchdogTimerFiredAction;
+
+/** Resets watchdog timer and runs the block if the timer wasn't fired. The block is processed immideately if the timer was not allowed by the store. Good for processing chained responses, when several prodict id's were requested. Remember to call [- disableWatchdogTimerAndComplete:] after all responses are received.
  @param block Block to process response.
  @see disableWatchdogTimerAndComplete
  */
 - (void)ifNotWatchdogTimerIsFiredResetItAndRun:(void (^)())block;
 
-/** Resets watchdog timer.
- */
-- (void)resetWatchdogTimer;
-
-/** Disables watchdog timer and complete processing of responses in block. Afterwards watchdog timer can't be reactivated on called instance of this class.
+/** Disables watchdog timer and complete processing of responses in block. We assume that response delegate object is destroyed on request success of falure. After the call the watchdog timer can't be reactivated on the receiver object.
  @param completion Block that will complete processing of responses. If timer was fired previously then block will not be executed, but will always be from within - (void)watchdogTimerFiredAction.
  Do this after all responses are came or on error reponse.
  */
@@ -320,7 +319,7 @@ extern NSString* const RMStoreNotificationUserIdentifier;
 - (void)storeProductsRequestStarted:(NSNotification*)notification;
 - (void)storeProductsRequestFailed:(NSNotification*)notification;
 - (void)storeProductsRequestFinished:(NSNotification*)notification;
-- (void)storeRefreshReceiptStarted __attribute__((availability(ios,introduced=7.0)));
+- (void)storeRefreshReceiptStarted:(NSNotification*)notification __attribute__((availability(ios,introduced=7.0)));
 - (void)storeRefreshReceiptFailed:(NSNotification*)notification __attribute__((availability(ios,introduced=7.0)));
 - (void)storeRefreshReceiptFinished:(NSNotification*)notification __attribute__((availability(ios,introduced=7.0)));
 - (void)storeRestoreTransactionsStarted:(NSNotification*)notification;
