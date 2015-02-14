@@ -266,6 +266,7 @@ extern NSString* const RMStoreNotificationUserIdentifier;
 @protocol RMStoreTransactionPersistor<NSObject>
 
 - (void)persistTransaction:(SKPaymentTransaction*)transaction;
+- (void)persistTransactionWithProductIdentifier:(NSString *)productIdentifier;
 
 @end
 

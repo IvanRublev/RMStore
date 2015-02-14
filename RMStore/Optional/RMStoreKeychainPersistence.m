@@ -93,6 +93,11 @@ NSData* RMKeychainGetValue(NSString *key)
 {
     SKPayment *payment = paymentTransaction.payment;
     NSString *productIdentifier = payment.productIdentifier;
+    [self persistTransactionWithProductIdentifier:productIdentifier];
+}
+
+- (void)persistTransactionWithProductIdentifier:(NSString*)productIdentifier
+{
     NSDictionary *transactions = [self transactionsDictionary];
     NSInteger count = [transactions[productIdentifier] integerValue];
     count++;
