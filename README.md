@@ -37,7 +37,7 @@ RMStoreObserver protocol is extended with the following methods:
 ```objective-c
 - (void)storePaymentTransactionStarted:(NSNotification*)notification;
 - (void)storeProductsRequestStarted:(NSNotification*)notification;
-- (void)storeRefreshReceiptStarted;
+- (void)storeRefreshReceiptStarted:(NSNotification*)notification;
 - (void)storeRestoreTransactionsStarted:(NSNotification*)notification;
 ```
 
@@ -47,11 +47,13 @@ Set of the mentioned methods can be used to update UI on start or stop of reques
 
 ##Add RMStore to your project
 
-1. Add [`RMStore.h`](https://github.com/robotmedia/RMStore/blob/master/RMStore/RMStore.h) and [`RMStore.m`](https://github.com/robotmedia/RMStore/blob/master/RMStore/RMStore.m)
-2. Link `StoreKit.framework`
-3. Profit!
+To use this version of RMStore for iOS7.x or later you should manually add it to the project.
 
-Check out the [wiki](https://github.com/robotmedia/RMStore/wiki/Installation) for more options.
+1. Clone or subtree this `git clone https://github.com/IvanRublev/RMStore.git` repo.
+2. Add [`RMStore`](https://github.com/IvanRublev/RMStore/blob/master/RMStore/) folder to your project
+2. Link `StoreKit.framework`. To use RMStoreKeychainPersistence Link `Security.framework` .
+3. To use RMStoreAppReceiptVerificator you will need OpenSSL. Use cocoapods `pod 'OpenSSL', '~> 1.0.1'` to install it or [see wiki](https://github.com/robotmedia/RMStore/wiki/Receipt-verification) for manual installation options.
+4. Profit!
 
 ##StoreKit with blocks
 

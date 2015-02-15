@@ -61,6 +61,13 @@
 
 @end
 
+// Unhinde some private things for watchdog timer tests
+extern NSTimeInterval const RMStoreWatchdogMinimalAllowedTimeout;
+@interface RMProductsRequestDelegate : RMStoreWatchdoggedObject<SKProductsRequestDelegate>
+@property (nonatomic, weak) RMStore *store;
+@end
+
+
 @implementation RMStore(Private)
 
 - (NSMutableDictionary*)products
@@ -176,6 +183,47 @@
     [_store requestProducts:[NSSet setWithObject:@"test"] success:^(NSArray *products, NSArray *invalidProductIdentifiers) {
     } failure:^(NSError *error) {
     }];
+}
+
+- (void)testWatchdogTimerOnRequestProductsFireDependsOnAllowance
+{
+    NSTimeInterval timeout = 0.2;
+    NSTimeInterval eventTimeout = timeout+0.1;
+    
+    _store.useRequestProductsWatchdogTimer = YES;
+    
+    RMProductsRequestDelegate* delegate = [RMProductsRequestDelegate new];
+    id objMock = [OCMockObject partialMockForObject:delegate];
+
+    __block NSUInteger timerActionRunsCount = 0;
+    [[[[objMock expect] andDo:^(NSInvocation* inv) {
+        timerActionRunsCount++;
+    }] andForwardToRealObject] watchdogTimerFiredAction];
+    delegate.store = _store;
+
+    id observer = [OCMockObject niceMockForProtocol:@protocol(RMStoreObserver)];
+    [[observer expect] storeProductsRequestFailed:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
+        XCTAssertTrue([[notification rm_storeError] code]==RMStoreErrorCodeWatchdogTimerFired, @"");
+        return YES;
+    }]];
+    [_store addStoreObserver:observer];
+    
+    [delegate activateWatchdogTimerWithStore:_store timeout:timeout];
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:eventTimeout]];
+    
+    [objMock verify];
+    [observer verify];
+
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:eventTimeout]];
+    XCTAssertTrue(timerActionRunsCount==1, @"");
+    
+    _store.useRequestProductsWatchdogTimer = NO;
+}
+
+- (void)testWatchDogTimerMinimalTimeoutValue
+{
+    _store.requestProductTimeout = 0;
+    XCTAssertTrue(_store.requestProductTimeout == RMStoreWatchdogMinimalAllowedTimeout, @"");
 }
 
 - (void)testRestoreTransactions
