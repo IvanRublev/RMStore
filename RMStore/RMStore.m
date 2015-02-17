@@ -178,9 +178,9 @@ typedef void (^RMStoreSuccessBlock)();
     [[SKPaymentQueue defaultQueue] removeTransactionObserver:self];
 }
 
-+ (RMStore *)defaultStore
++ (instancetype)defaultStore
 {
-    static RMStore *sharedInstance = nil;
+    static id sharedInstance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         sharedInstance = [[[self class] alloc] init];

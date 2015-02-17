@@ -85,7 +85,7 @@ extern NSString* const RMStoreNotificationUserIdentifier;
 
 /** Returns the singleton store instance.
  */
-+ (RMStore*)defaultStore;
++ (instancetype)defaultStore;
 
 #pragma mark Watchdog timer
 ///---------------------------------------------
