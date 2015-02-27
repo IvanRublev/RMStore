@@ -163,6 +163,7 @@ typedef void (^RMStoreSuccessBlock)();
     if (self = [super init])
     {
         _useRequestProductsWatchdogTimer = NO;
+        _requestProductTimeout = RMStoreRequestProductWatchdogDefaultTimeout;
         
         _addPaymentParameters = [NSMutableDictionary dictionary];
         _products = [NSMutableDictionary dictionary];
@@ -890,7 +891,7 @@ typedef void (^RMStoreSuccessBlock)();
         !_isWatchdogTimerFired && !_isWatchdogTimerDisabled) {
         RMWatchdogTimerInvalidate(_watchdogTimer);
         NSTimeInterval timeout = _timeout;
-        if (timeout > RMStoreWatchdogMinimalAllowedTimeout) {
+        if (timeout < RMStoreWatchdogMinimalAllowedTimeout) {
             NSLog(@"ATTENTION: watchdog timeout (%.2f) is less then recommended %.2f", timeout, RMStoreWatchdogMinimalAllowedTimeout);
         }
         _watchdogTimer = [NSTimer
